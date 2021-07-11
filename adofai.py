@@ -34,5 +34,6 @@ class ADOFAI:
     def press(self, key='k'):
         self.kb.press(key)
         self.kb.release(key)
+        print("1")
 
-    def sec(self): return 61/self.bpm
+    def sec(self): return 121/self.bpm
