@@ -67,7 +67,7 @@ while True:
         if keyboard.is_pressed('p'):
             print("p")
             #time.sleep(0.4)
-            autoplay('C:/Users/82105/Downloads/autoplay/ADOFAI-Autoplayer-main/MPP Renew.adofai')
+            autoplay(File path)
             time.sleep(0.1)
         elif keyboard.is_pressed('esc'):
             sys.exit()
