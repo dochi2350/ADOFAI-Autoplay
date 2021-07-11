@@ -1,7 +1,7 @@
 # ADOFAI-Autoplayer
 얼불춤 자동 플레이 매크로
 
-Inspired from [kairess/dance-of-fire-and-ice-macro](https://github.com/kairess/dance-of-fire-and-ice-macro)
+Forked from [kairess/dance-of-fire-and-ice-macro](https://github.com/kairess/dance-of-fire-and-ice-macro)
 
 
 ## 수정 일지
