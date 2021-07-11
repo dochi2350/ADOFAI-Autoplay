@@ -1,10 +1,12 @@
 from adofai import ADOFAI
 import json
-
+import keyboard
+import time
+import sys
 
 def autoplay(levelpath):
-    with open(levelpath, encoding='utf-8-sig') as f:
-        ctx = json.loads(f.read())
+    with open(levelpath, 'r') as f:
+        ctx = json.load(f)
     settings = ctx['settings']
     bpm = settings['bpm']
     offset = settings['offset']
@@ -60,5 +62,14 @@ def autoplay(levelpath):
     macro = ADOFAI(bpm, realdata, offset, speedData)
     macro.startMacro()
 
-
-autoplay('./testlevel.adofai')
+while True:
+    try:
+        if keyboard.is_pressed('p'):
+            print("p")
+            #time.sleep(0.4)
+            autoplay('C:/Users/82105/Downloads/autoplay/ADOFAI-Autoplayer-main/MPP Renew.adofai')
+            time.sleep(0.1)
+        elif keyboard.is_pressed('esc'):
+            sys.exit()
+    except:
+        pass
