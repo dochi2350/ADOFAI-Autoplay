@@ -1,39 +1,65 @@
+from io import BufferedRandom
 from pynput.keyboard import Key, Controller
-import json, time
+import time, json
 
 class ADOFAI:
-    def __init__(self, bpm = 100, pathdata = [180]*9, offset = 0, speeds = {}):
+    def __init__(self, bpm = 0, pathdata = 'RRRRRRRR', offset = 0, bpmdata = {}, twirldata = {}):
         self.kb = Controller()
         self.bpm = bpm
-        self.pathdata = pathdata
-        self.speedData = speeds
+        key = list("RWHQGqUoTEJpRAMCBYDVFZNxL")
+        self.tileInfo = {key[i] : 15*i for i in range(len(key))}
+        self.pathdata = self.tileanalyze(pathdata)
+        self.bpmdata = bpmdata
+        self.twirldata = twirldata
+        self.sec = 60/bpm
         self.offset = offset/1000
         self.length = len(self.pathdata)
+        self.twirled = 0
+        print("init")
 
-    def start(self):
-        print(f"[Start] BPM : {self.bpm}")
-        self.press(Key.space)
-        slp = self.offset + 4 * self.sec() + 0.1
-        print(slp)
-        time.sleep(slp)
-
-    def changeBPM(self, newBPM):
-        self.bpm = newBPM
+    def tileanalyze(self, pathdata):
+        processed = []
+        for i in range(len(pathdata)-1):
+            nowtile  = self.tileInfo[pathdata[i]]
+            nexttile = self.tileInfo[pathdata[i+1]]
+            #### TODO : 실험 안해봄 ####
+            angle = 180 - nowtile + nexttile
+            #### TODO : 실험 안해봄 ####
+            processed.append(angle)
+        #TODO : Processing Midspin Tile
+        return processed + [self.tileInfo[pathdata[-1]]]
     
     def startMacro(self):
-        self.start()
+        print(self.bpmdata)
+        print(self.twirldata)
+        #print(self.tileInfo)
+        #print(self.pathdata)
+        
+        print("[Start] BPM : " + str(self.bpm))
+        self.kb.press('p')
+        self.kb.release('p')
+        time.sleep(self.offset + 3 * self.sec + 1.25)
+        
         tile = 0
         while tile < self.length:
-            delay = self.pathdata[tile]/180
-            self.press()
-            event = self.speedData.get(tile+2, None)
-            if not event is None: self.changeBPM(event)
+            self.kb.press('k')
+            self.kb.release('k')
+            
+            bpmcheck = self.bpmdata.get(tile, None)
+            twirlcheck = self.twirldata.get(tile, None)
+            if isinstance(bpmcheck, int):
+                print("[ChangeBPM] BPM : " + str(self.bpm) + "=>" + str(bpmcheck) + "(" + str(tile + 1) + ")")
+                self.bpm = bpmcheck
+                self.sec = 60/bpmcheck
+            if isinstance(twirlcheck, str):
+                print("tile twirl")
+                self.twirled = 1 - self.twirled
+            
             tile += 1
-            time.sleep(delay * self.sec())
-    
-    def press(self, key='k'):
-        self.kb.press(key)
-        self.kb.release(key)
-        print("1")
+            
+            self.wait(tile)
+            print(self.pathdata[tile], (360*self.twirled + (-2*self.twirled+1) * self.pathdata[tile]) / 180 * self.sec)
 
-    def sec(self): return 121/self.bpm
+    def wait(self, tile):
+        delay = (360*self.twirled + ((-2)*self.twirled+1) * self.pathdata[tile]) / 180
+        time.sleep(delay*self.sec)
